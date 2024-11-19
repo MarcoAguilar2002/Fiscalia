@@ -1,0 +1,13 @@
+ Backend
+ py -m pip install virtualenv
+ python -m venv venv
+ venv/scripts/activate
+ python -m pip install  Django
+  pip install djangorestframework
+  django-admin startproject dashboard .
+  python manage.py startapp files 
+python -m pip install django-cors-headers
+
+  Fronted
+   npm create vite@latest
+   npm install react-router-dom
