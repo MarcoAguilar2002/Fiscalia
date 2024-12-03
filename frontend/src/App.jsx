@@ -2,14 +2,16 @@ import react from "react"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import Login from "./pages/login"
 import Register from "./pages/Register"
-import Dashboard from "./pages/dashboard"
+import Dashboard from "./pages/Dashboard"
 import Notfound from "./pages/Notfound"
 import ProtectedRoute from "./components/ProtectedRoute"
 import Inicio from "./pages/casos/Inicio"
-import Caso from "./pages/casos/Caso"
-import Buscar from "./pages/casos/Buscar"
-import RegistrarCaso from "./pages/casos/RegistrarCaso"
+import Carpeta from "./pages/casos/Carpeta"
+import RegistrarCarpeta from "./pages/casos/RegistrarCarpeta"
 import Perfil from "./pages/perfil/Perfil"
+import EditPerfil from "./pages/perfil/EditPerfil"
+import VerCarpeta from "./pages/casos/VerCarpeta"
+import EditarCarpeta from "./pages/casos/EditarCarpeta"
 
 function Logout(){
   localStorage.clear()
@@ -34,11 +36,12 @@ function App() {
           }
         >
           <Route path="/" element={<Inicio />} />
-          <Route path="/buscar" element={<Buscar />} />
-          <Route path="/casos" element={<Caso />} />
+          <Route path="/carpetas" element={<Carpeta />} />
           <Route path="/perfil" element={<Perfil />} />
-          <Route path="/casos/registrar" element={<RegistrarCaso />} />
-
+          <Route path="/editar-perfil" element={<EditPerfil />} />
+          <Route path="/carpetas/registrar" element={<RegistrarCarpeta />} />
+          <Route path="/carpeta/:pk" element={<VerCarpeta />} />
+          <Route path="/carpeta/editar/:pk" element={<EditarCarpeta />} />
         </Route>
         
         <Route path="/login" element={<Login />} />

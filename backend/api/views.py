@@ -2,8 +2,10 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .serializers import UserSerializer, CasoSerializer, PerfilSerializer, ParteInvolucradaSerializer, ArchivoSerializer
-from .models import Caso, Archivo, ParteInvolucrada, Perfil
+from .serializers import UserSerializer, PerfilSerializer,CarpetaFiscalSerializer,ImputadoSerializer,ArchivoInvestigadoSerializer,ArchivoDisposicionSerializer
+from .models import  Perfil,CarpetaFiscal,Imputado,ArchivoInvestigado,ArchivoDisposicion
+from django.shortcuts import get_object_or_404
+
 
 # View para crear usuarios
 class CreateUserView(generics.CreateAPIView):
@@ -11,71 +13,91 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
-
-# Views para Caso: listar, crear, obtener, actualizar y eliminar
-class CasoListCreate(generics.ListCreateAPIView):
-    serializer_class = CasoSerializer
-    permission_classes = [IsAuthenticated]
-    
-    def get_queryset(self):
-        user = self.request.user
-        return Caso.objects.filter(user_id=user)
-    
     def perform_create(self, serializer):
-        serializer.save(user_id=self.request.user)
+        user = serializer.save()
+        Perfil.objects.create(user=user) 
 
-
-class CasoRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = CasoSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        return Caso.objects.filter(user_id=user)
-
-
-# Views para Archivo: listar, crear, obtener, actualizar y eliminar
-class ArchivoListCreate(generics.ListCreateAPIView):
-    serializer_class = ArchivoSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        # Filtrar archivos solo para los casos asociados al usuario actual
-        return Archivo.objects.filter(caso_id__user_id=self.request.user)
-
-    def perform_create(self, serializer):
-        serializer.save()  # Suponiendo que `caso_id` se pasa en el request data
-
-
-class ArchivoRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = ArchivoSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return Archivo.objects.filter(caso_id__user_id=self.request.user)
-
-
-# Views para ParteInvolucrada: listar, obtener y actualizar
-class ParteInvolucradaListCreate(generics.ListAPIView):
-    serializer_class = ParteInvolucradaSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return ParteInvolucrada.objects.filter(caso_id__user_id=self.request.user)
-
-
-class ParteInvolucradaRetrieveUpdateDestroy(generics.RetrieveUpdateAPIView):
-    serializer_class = ParteInvolucradaSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return ParteInvolucrada.objects.filter(caso_id__user_id=self.request.user)
-    
-# Vista para ver y editar el perfil del usuario autenticado
-class PerfilRetrieveUpdate(generics.RetrieveUpdateAPIView):
+# ---- Perfil
+class VerPerfilView(generics.RetrieveAPIView):
+    queryset = Perfil.objects.all()
     serializer_class = PerfilSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
-        # Retorna el perfil del usuario autenticado
-        return Perfil.objects.get(user_id=self.request.user)
+        return Perfil.objects.get(user=self.request.user)
+
+class EditarPerfilView(generics.UpdateAPIView):
+    queryset = Perfil.objects.all()
+    serializer_class = PerfilSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return Perfil.objects.get(user=self.request.user)
+
+#---- Carpeta Fiscal
+class CarpetaFiscalListCreateView(generics.ListCreateAPIView):
+    queryset = CarpetaFiscal.objects.all()
+    serializer_class = CarpetaFiscalSerializer
+    permission_classes = [IsAuthenticated]
+
+class CarpetaFiscalRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = CarpetaFiscal.objects.all()
+    serializer_class = CarpetaFiscalSerializer
+    permission_classes = [IsAuthenticated]
+
+class VerCarpetaView(generics.RetrieveAPIView):
+    queryset = CarpetaFiscal.objects.all()
+    serializer_class = CarpetaFiscalSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return CarpetaFiscal.objects.get(id=self.kwargs['pk'])
+    
+#---- Imputados
+class ImputadosListCreateView(generics.ListCreateAPIView):
+    serializer_class = ImputadoSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        carpeta_id = self.kwargs['pk']
+        return Imputado.objects.filter(carpeta_fiscal=carpeta_id)
+    
+    def perform_create(self, serializer):
+        carpeta_id = self.kwargs['pk']
+        carpeta_fiscal = CarpetaFiscal.objects.get(pk=carpeta_id)
+        serializer.save(carpeta_fiscal=carpeta_fiscal)
+
+class ArchivosImputadosListCreateView(generics.ListCreateAPIView):
+    queryset = ArchivoInvestigado.objects.all()
+    serializer_class = ArchivoInvestigadoSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        imputado = Imputado.objects.get(pk=self.kwargs['imputado'])
+        serializer.save(imputado=imputado, subido_user=self.request.user)
+
+class ArchivosImputadosListCreateView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = ArchivoInvestigado.objects.all()
+    serializer_class = ArchivoInvestigadoSerializer
+    permission_classes = [IsAuthenticated]
+
+    
+
+
+class ArchivosDisposicionesListCreateView(generics.ListCreateAPIView):
+    serializer_class = ArchivoDisposicionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        carpeta_id = self.kwargs.get('pk')
+        carpeta = get_object_or_404(CarpetaFiscal, id=carpeta_id)
+        queryset = ArchivoDisposicion.objects.filter(carpeta_fiscal=carpeta)
+        return queryset
+    
+    def perform_create(self, serializer):
+        carpeta_id = self.kwargs.get('pk')
+        carpeta = get_object_or_404(CarpetaFiscal, id=carpeta_id)
+        serializer.save(
+            subido_user=self.request.user,
+            carpeta_fiscal=carpeta
+        )

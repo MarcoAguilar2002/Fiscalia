@@ -94,7 +94,7 @@ export default function Dashboard({ content }) {
           </ListItem>
   
           <ListItem key={2} disablePadding>
-            <ListItemButton component={Link} to={"/casos"} selected={"/casos" === location.pathname}
+            <ListItemButton component={Link} to={"/carpetas"} selected={"/carpetas" === location.pathname}
              sx={{
               '&.Mui-selected': {
                 backgroundColor: '#003e7c', // Color de fondo cuando está seleccionado
@@ -105,25 +105,10 @@ export default function Dashboard({ content }) {
               <ListItemIcon sx={{ color: 'white' }}>
                 <UploadIcon />
               </ListItemIcon>
-              <ListItemText primary={"Expedientes"} sx={{ color: 'white' }} />
+              <ListItemText primary={"Carpetas Fiscales"} sx={{ color: 'white' }} />
             </ListItemButton>
           </ListItem>
-  
-          <ListItem key={3} disablePadding>
-            <ListItemButton component={Link} to={"/buscar"} selected={"/buscar" === location.pathname}
-             sx={{
-              '&.Mui-selected': {
-                backgroundColor: '#003e7c', // Color de fondo cuando está seleccionado
-                '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
-                  color: '#e0e0e0', // Color más claro para los íconos y texto al estar seleccionado
-                },
-              }}}>
-              <ListItemIcon sx={{ color: 'white' }}>
-                <ContentPasteSearchIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Buscar"} sx={{ color: 'white' }} />
-            </ListItemButton>
-          </ListItem>
+
   
           <ListItem key={4} disablePadding>
             <ListItemButton component={Link} to={"/logout"}  sx={{

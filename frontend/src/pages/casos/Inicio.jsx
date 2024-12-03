@@ -67,7 +67,7 @@ function Inicio() {
       </Box>
 
       <Box sx={{ width: '80%', textAlign: 'center' }}>
-        <Typography variant="h5">Archivados</Typography>
+        <Typography variant="h5">Expedientes Archivados</Typography>
         <Avatar 
           sx={{ 
             bgcolor: '#bdbdbd', // Color personalizado (azul oscuro)

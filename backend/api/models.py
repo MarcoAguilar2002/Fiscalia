@@ -1,47 +1,58 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+# Modelo Perfil (Información Adicional del Usuario)
 class Perfil(models.Model):
-    nombres = models.CharField(max_length=50)
-    apellidos = models.CharField(max_length=50)
-    fecha_nacimiento = models.DateField()
-    sexo = models.CharField(max_length=45)
-    direccion = models.CharField(max_length=45)
-    telefono = models.CharField(max_length=45)
-    user_id = models.OneToOneField(User, on_delete=models.CASCADE, related_name="perfil")
+    nombres = models.CharField(max_length=45, null=True, blank=True)
+    apellidos = models.CharField(max_length=45, null=True, blank=True)
+    dni = models.CharField(max_length=45, null=True, blank=True)
+    fecha_nacimiento = models.DateField(null=True, blank=True)
+    sexo = models.CharField(max_length=45, null=True, blank=True)
+    estado_civil = models.CharField(max_length=45, null=True, blank=True)
+    direccion = models.CharField(max_length=100, null=True, blank=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil')
+    foto = models.ImageField(upload_to='perfiles/', null=True, blank=True)  # Para imágenes de perfil
 
     def __str__(self):
-        return f"{self.nombres} {self.apellidos}"
+        return f"Perfil {self.nombres} {self.apellidos}"
 
-
-class Caso(models.Model):
-    numero_expediente = models.CharField(max_length=45)
-    descripcion = models.CharField(max_length=255)
-    fecha_inicio = models.DateField() 
-    estado = models.BooleanField()
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="casos")
+class CarpetaFiscal(models.Model):
+    numero_carpeta = models.CharField(max_length=45)
+    fecha = models.DateField(null=True, blank=True)
+    numero_expediente = models.CharField(max_length=45,null=True)
+    estado = models.CharField(max_length=45,default="Investigación")
 
     def __str__(self):
-        return self.numero_expediente
+        return f"{self.numero_carpeta} - {self.numero_expediente}"
 
+class ArchivoDisposicion(models.Model):
+    nombre = models.CharField(max_length=45)
+    fecha = models.DateField(auto_now_add=True)
+    tipo = models.CharField(max_length=45)
+    archivo = models.FileField(upload_to='archivos_disposicion/')
+    carpeta_fiscal = models.ForeignKey(CarpetaFiscal, on_delete=models.CASCADE, related_name="archivos_disposicion")
+    subido_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="archivos_disposicion_subidos")
 
-class ParteInvolucrada(models.Model):
+    def __str__(self):
+        return self.nombre
+
+class Imputado(models.Model):
     nombres = models.CharField(max_length=45)
     apellidos = models.CharField(max_length=45)
-    tipo_parte = models.CharField(max_length=45)
-    contacto = models.CharField(max_length=45)
-    caso_id = models.ForeignKey(Caso, on_delete=models.CASCADE, related_name="partes_involucradas")
+    dni = models.CharField(max_length=9)
+    direccion = models.CharField(max_length=45)
+    correo_electronico = models.EmailField(max_length=100)
+    telefono = models.CharField(max_length=9)
+    carpeta_fiscal = models.ForeignKey(CarpetaFiscal, on_delete=models.CASCADE, related_name="imputados")
 
     def __str__(self):
-        return f"{self.nombres} {self.apellidos} ({self.tipo_parte})"
+        return f"{self.nombres} {self.dni}"
 
-
-class Archivo(models.Model):
-    titulo = models.CharField(max_length=45)
-    descripcion = models.CharField(max_length=255)
-    fecha_subida = models.DateTimeField(auto_now_add=True)
-    caso_id = models.ForeignKey(Caso, on_delete=models.CASCADE, related_name="archivos")
-    ruta = models.CharField(max_length=255)
-
+class ArchivoInvestigado(models.Model):
+    nombre = models.CharField(max_length=45)
+    archivo = models.FileField(upload_to='archivos_investigados/')
+    fecha = models.DateField(auto_now_add=True)
+    imputado = models.ForeignKey(Imputado, on_delete=models.CASCADE, related_name="archivos_investigado")
+    subido_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="archivos_investigado_subidos")
     def __str__(self):
-        return self.titulo
+        return self.nombre

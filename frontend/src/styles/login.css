@@ -1,0 +1,95 @@
+/* Estilos generales */
+html, body {
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Estilo del header */
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #003366; /* Color azul de fondo */
+    color: white;
+    padding: 10px 20px;
+    font-family: Arial, sans-serif; /* Cambia si tienes una fuente diferente */
+    margin: 0;
+    height: 70px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.header-left img {
+    height: 50px; /* Ajusta según sea necesario */
+    margin-right: 15px;
+}
+
+.header-text h1, .header-text h2, .header-text h3 {
+    margin: 0;
+    font-weight: normal;
+}
+
+.header-text h1 {
+    font-size: 20px;
+}
+
+.header-text h2 {
+    font-size: 16px;
+}
+
+.header-text h3 {
+    font-size: 14px;
+}
+
+.header-right {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Estilo del container */
+.container {
+    flex: 1; /* Ocupa todo el espacio disponible debajo del header */
+    display: flex; /* Divide el contenido en columnas */
+    height: calc(97vh - 70px); /* Altura total menos el header */
+    margin: 0;
+    padding: 0;
+}
+
+/* Estilos para las columnas dentro del container */
+.container .left-column {
+    flex: 1; /* Ocupa todo el espacio disponible en la columna izquierda */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0; /* Sin márgenes adicionales */
+    padding: 0; /* Sin padding adicional */
+}
+
+.container .left-column img {
+    width: 100%; /* Imagen ocupa toda la columna */
+    height: 100%; /* Imagen ocupa toda la columna */
+    object-fit: cover; /* Ajusta la imagen sin deformarla */
+}
+
+.container .right-column {
+    flex: 1; /* Ocupa el mismo espacio que la columna izquierda */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0; /* Sin márgenes adicionales */
+    padding: 20px; /* Espaciado interno si es necesario */
+}
+
+/* Formulario centrado en su columna */
+.form-section {
+    width: 100%; /* Ajusta según sea necesario */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
