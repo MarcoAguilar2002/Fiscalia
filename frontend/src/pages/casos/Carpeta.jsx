@@ -1,16 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link,useLocation } from 'react-router-dom';
 import TablaCarpetaFiscales from '../table/TablaCarpetaFiscales';
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import api from "../../api";
+import Alerta from '../Alerta';
 
 function Carpeta() {
   const [search, setSearch] = useState('');
   const [carpetas, setCarpetas] = useState([]);
+  const [alerta, setAlerta] = useState({ open: false, type: '', message: '' });
+  const location = useLocation();
 
   useEffect(() => {
     getCarpetas();
-  }, []);
+    if (location.state && location.state.type && location.state.message) {
+      setAlerta({
+        open: true,
+        type: location.state.type,
+        message: location.state.message,
+      });
+    }
+  }, [location]);
 
   const getCarpetas = () => {
     api.get("/api/carpetasFiscales/")
@@ -25,7 +35,11 @@ function Carpeta() {
     api.delete(`/api/carpeta-fiscal/${id}/`)
       .then((res) => {
         if (res.status === 204) {
-          alert("Carpeta eliminada");
+          setAlerta({
+            open: true,
+            type: "error",
+            message: "Carpeta eliminada exitosamente.",
+          });
           getCarpetas();
         } else {
           alert("No se pudo eliminar");
@@ -36,6 +50,10 @@ function Carpeta() {
 
   const handleSearchChange = (event) => {
     setSearch(event.target.value);
+  };
+
+  const handleCloseAlert = () => {
+    setAlerta({ ...alerta, open: false });
   };
 
   return (
@@ -81,6 +99,12 @@ function Carpeta() {
 
       </div>
       <TablaCarpetaFiscales search={search} carpetas={carpetas} deleteCarpeta={deleteCarpeta} />
+      <Alerta
+        open={alerta.open}
+        onClose={handleCloseAlert}
+        type={alerta.type}
+        message={alerta.message}
+      />
     </>
   );
 }

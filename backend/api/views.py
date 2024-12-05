@@ -76,7 +76,7 @@ class ArchivosImputadosListCreateView(generics.ListCreateAPIView):
         imputado = Imputado.objects.get(pk=self.kwargs['imputado'])
         serializer.save(imputado=imputado, subido_user=self.request.user)
 
-class ArchivosImputadosListCreateView(generics.RetrieveUpdateDestroyAPIView):
+class ArchivosImputadosRetrieveDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = ArchivoInvestigado.objects.all()
     serializer_class = ArchivoInvestigadoSerializer
     permission_classes = [IsAuthenticated]

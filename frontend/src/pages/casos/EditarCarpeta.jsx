@@ -39,8 +39,7 @@ function EditarCarpeta() {
     api.patch(`/api/carpeta-fiscal/${pk}/`, formData)
       .then((res) => {
         if (res.status === 200) {
-          alert('Carpeta editada correctamente');
-          navigate('/carpetas');
+          navigate('/carpetas', { state: { type: "info", message: "Carpeta editada exitosamente." } });
         } else {
           alert('No se pudo editar la carpeta');
         }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Button, Container, Typography, Box } from '@mui/material';
-import { useNavigate } from 'react-router-dom'; // Para redireccionar después de crear
-import api from '../../api'; // Asegúrate de configurar correctamente tu cliente API
+import { useNavigate } from 'react-router-dom'; 
+import api from '../../api'; 
 
 function RegistrarCaso() {
   const navigate = useNavigate(); // Hook para redirigir
@@ -26,7 +26,7 @@ function RegistrarCaso() {
       .post('/api/carpetasFiscales/', formData) 
       .then((res) => {
         if (res.status === 201) {
-          navigate('/carpetas'); // Redirige a la lista de carpetas
+          navigate('/carpetas', { state: { type: "success", message: "Carpeta creada exitosamente." } }); // Redirige a la lista de carpetas
         } else {
           alert('No se pudo registrar la Carpeta Fiscal.');
         }
