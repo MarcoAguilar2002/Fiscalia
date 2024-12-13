@@ -11,7 +11,8 @@ import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
 import UploadIcon from '@mui/icons-material/Upload';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import { Outlet } from "react-router-dom"; // Importa Outlet para las rutas anidadas
-
+import api from "../api";
+import { useState, useEffect } from "react";
 
 const drawerWidth = 240;
 
@@ -19,6 +20,7 @@ export default function Dashboard({ content }) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [drawerOpen, setDrawerOpen] = React.useState(true); // Estado para controlar el drawer en pantallas grandes
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [perfil, setPerfil] = useState({});
   const location = useLocation()
 
   const handleDrawerToggle = () => {
@@ -36,6 +38,21 @@ export default function Dashboard({ content }) {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+
+  const getPerfil = () => {
+    api
+      .get("/api/perfil/")
+      .then((res) => res.data)
+      .then((data) => {
+        setPerfil(data);
+      })
+      .catch((err) => alert(err));
+  };
+
+  useEffect(() => {
+    getPerfil();
+  }, []);
 
   const drawer = (
     <div>
@@ -165,7 +182,7 @@ export default function Dashboard({ content }) {
 
           <Tooltip title="Abrir configuración">
             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-              <Avatar alt="Foto De Perfil" src="https://via.placeholder.com/150" />
+              <Avatar alt="Foto De Perfil" src={perfil.foto} />
             </IconButton>
           </Tooltip>
 

@@ -19,8 +19,8 @@ class Perfil(models.Model):
 class CarpetaFiscal(models.Model):
     numero_carpeta = models.CharField(max_length=45)
     fecha = models.DateField(null=True, blank=True)
-    numero_expediente = models.CharField(max_length=45,null=True)
-    estado = models.CharField(max_length=45,default="Investigación")
+    numero_expediente = models.CharField(max_length=45,null=True,blank=True)
+    estado = models.CharField(max_length=45,default="Preliminar")
 
     def __str__(self):
         return f"{self.numero_carpeta} - {self.numero_expediente}"
@@ -54,5 +54,6 @@ class ArchivoInvestigado(models.Model):
     fecha = models.DateField(auto_now_add=True)
     imputado = models.ForeignKey(Imputado, on_delete=models.CASCADE, related_name="archivos_investigado")
     subido_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="archivos_investigado_subidos")
+    tipo = models.CharField(max_length=45)
     def __str__(self):
         return self.nombre

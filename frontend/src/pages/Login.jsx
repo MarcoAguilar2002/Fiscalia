@@ -5,6 +5,7 @@ import fotoLogin from '../images/loginFoto.png';
 import "../styles/login.css"
 
 function Login() {
+    
     return (
         <div className="login-page">
             <header className="header-section">

@@ -1,8 +1,29 @@
-import React from 'react';
 import { Box, Typography } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
+import api from "../../api";
+import React, { useState, useEffect } from 'react';
 
 function Inicio() {
+  const [carpetas, setCarpetas] = useState([]);
+
+  useEffect(() => {
+    getCarpetas();
+  }, []);
+
+  const getCarpetas = () => {
+    api.get("/api/carpetasFiscales/")
+      .then((res) => res.data)
+      .then((data) => {
+        setCarpetas(data);
+      })
+      .catch((err) => alert("Error al cargar las carpetas: " + err));
+  };
+
+  // Contadores por estado
+  const contarPorEstado = (estado) => {
+    return carpetas.filter(carpeta => carpeta.estado === estado).length;
+  };
+
   return (
     <Box
       sx={{
@@ -16,70 +37,70 @@ function Inicio() {
       }}
     >
       <Box sx={{ width: '80%', textAlign: 'center' }}>
-        <Typography variant="h5">Número de casos</Typography>
-        <Avatar 
-          sx={{ 
-            bgcolor: '#bdbdbd', // Color personalizado (azul oscuro)
-            width: 70, // Tamaño del avatar
-            height: 70, // Tamaño del avatar
+        <Typography variant="h5">Carpetas Preliminar</Typography>
+        <Avatar
+          sx={{
+            bgcolor: '#bdbdbd', // Color personalizado
+            width: 70,
+            height: 70,
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            margin: '0 auto', // Asegura que el avatar esté centrado en su celda
+            margin: '0 auto',
           }}
         >
-          0
-        </Avatar>
-      </Box>
-      
-      <Box sx={{ width: '80%', textAlign: 'center' }}>
-        <Typography variant="h5">Expedientes en Investigación</Typography>
-        <Avatar 
-          sx={{ 
-            bgcolor: '#bdbdbd', // Color personalizado (azul oscuro)
-            width: 70, // Tamaño del avatar
-            height: 70, // Tamaño del avatar
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            margin: '0 auto', // Asegura que el avatar esté centrado en su celda
-          }}
-        >
-          0
+          {contarPorEstado("Preliminar")}
         </Avatar>
       </Box>
 
       <Box sx={{ width: '80%', textAlign: 'center' }}>
-        <Typography variant="h5">Expedientes en Apelación</Typography>
-        <Avatar 
-          sx={{ 
-            bgcolor: '#bdbdbd', // Color personalizado (azul oscuro)
-            width: 70, // Tamaño del avatar
-            height: 70, // Tamaño del avatar
+        <Typography variant="h5">Carpetas Preparatoria</Typography>
+        <Avatar
+          sx={{
+            bgcolor: '#bdbdbd',
+            width: 70,
+            height: 70,
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            margin: '0 auto', // Asegura que el avatar esté centrado en su celda
+            margin: '0 auto',
           }}
         >
-          0
+          {contarPorEstado("Preparatoria")}
         </Avatar>
       </Box>
 
       <Box sx={{ width: '80%', textAlign: 'center' }}>
-        <Typography variant="h5">Expedientes Archivados</Typography>
-        <Avatar 
-          sx={{ 
-            bgcolor: '#bdbdbd', // Color personalizado (azul oscuro)
-            width: 70, // Tamaño del avatar
-            height: 70, // Tamaño del avatar
+        <Typography variant="h5">Carpetas con Requerimiento</Typography>
+        <Avatar
+          sx={{
+            bgcolor: '#bdbdbd',
+            width: 70,
+            height: 70,
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            margin: '0 auto', // Asegura que el avatar esté centrado en su celda
+            margin: '0 auto',
           }}
         >
-          0
+          {contarPorEstado("Con requerimiento")}
+        </Avatar>
+      </Box>
+
+      <Box sx={{ width: '80%', textAlign: 'center' }}>
+        <Typography variant="h5">Carpeta Archivada</Typography>
+        <Avatar
+          sx={{
+            bgcolor: '#bdbdbd',
+            width: 70,
+            height: 70,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            margin: '0 auto',
+          }}
+        >
+          {contarPorEstado("Archivado")}
         </Avatar>
       </Box>
     </Box>

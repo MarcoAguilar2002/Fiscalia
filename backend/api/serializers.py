@@ -35,7 +35,7 @@ class CarpetaFiscalSerializer(serializers.ModelSerializer):
             'estado'
         ]
         extra_kwargs = {
-            "id": {"read_only": True},  # El usuario lo asigna el backend
+            "id": {"read_only": True}, 
         }
         
 
@@ -85,6 +85,7 @@ class ArchivoInvestigadoSerializer(serializers.ModelSerializer):
             'archivo',
             'fecha',
             'imputado',
+            'tipo',
             'subido_user',
         ]
         extra_kwargs = {

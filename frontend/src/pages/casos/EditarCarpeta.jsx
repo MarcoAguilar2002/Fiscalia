@@ -102,9 +102,10 @@ function EditarCarpeta() {
             onChange={handleChange}
             sx={{ marginTop: '16px' }}
           >
-            <MenuItem value="Investigación">Investigación</MenuItem>
+            <MenuItem value="Preliminar">Preliminar</MenuItem>
+            <MenuItem value="Preparatoria">Preparatoria</MenuItem>
+            <MenuItem value="Con requerimiento">Con Requerimiento</MenuItem>
             <MenuItem value="Archivado">Archivado</MenuItem>
-            <MenuItem value="Finalizado">Finalizado</MenuItem>
           </Select>
           <Button
             type="submit"

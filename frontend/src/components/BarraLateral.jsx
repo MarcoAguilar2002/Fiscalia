@@ -113,8 +113,6 @@ export default function BarraLateral({ imputados, onSubSelected, archivosDisposi
               bgcolor: selectedSub === 'Providencia' ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
             }}
             onClick={handleSubClickProvidencia}
-
-
           >
             <ListItemIcon sx={{ color: 'white' }}>
               {subOpenProvidencia ? <FolderOpenIcon /> : <FolderIcon />}
@@ -136,8 +134,8 @@ export default function BarraLateral({ imputados, onSubSelected, archivosDisposi
           <Collapse in={subOpenProvidencia} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
               {archivosFiltradosProvidencia.map((archivo) => (
-                <Link to={archivo.archivo} target='__blank'>
-                  <ListItemButton key={archivo.id} sx={{ pl: 8 }}>
+                <Link to={archivo.archivo} target='__blank' key={archivo.id}>
+                  <ListItemButton sx={{ pl: 8 }}>
                     <ListItemIcon sx={{ color: 'white' }}>
                       <PictureAsPdfIcon />
                     </ListItemIcon>
@@ -154,7 +152,6 @@ export default function BarraLateral({ imputados, onSubSelected, archivosDisposi
               ))}
             </List>
           </Collapse>
-
           {/* Subcarpeta Disposiciones */}
           <ListItemButton
             sx={{
@@ -183,8 +180,8 @@ export default function BarraLateral({ imputados, onSubSelected, archivosDisposi
           <Collapse in={subOpenDisposiciones} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
               {archivosFiltradosDisposiciones.map((archivo) => (
-                <Link to={archivo.archivo} target='__blank'>
-                  <ListItemButton key={archivo.id} sx={{ pl: 8 }}>
+                <Link to={archivo.archivo} target='__blank' key={archivo.id}>
+                  <ListItemButton sx={{ pl: 8 }}>
                     <ListItemIcon sx={{ color: 'white' }}>
                       <PictureAsPdfIcon />
                     </ListItemIcon>
@@ -201,7 +198,6 @@ export default function BarraLateral({ imputados, onSubSelected, archivosDisposi
               ))}
             </List>
           </Collapse>
-
           {/* Subcarpeta Requerimientos */}
           <ListItemButton
             sx={{
@@ -230,8 +226,8 @@ export default function BarraLateral({ imputados, onSubSelected, archivosDisposi
           <Collapse in={subOpenRequerimientos} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
               {archivosFiltradosRequerimientos.map((archivo) => (
-                <Link to={archivo.archivo} target='__blank'>
-                  <ListItemButton key={archivo.id} sx={{ pl: 8 }}>
+                <Link to={archivo.archivo} target='__blank' key={archivo.id}>
+                  <ListItemButton sx={{ pl: 8 }}>
                     <ListItemIcon sx={{ color: 'white' }}>
                       <PictureAsPdfIcon />
                     </ListItemIcon>
@@ -250,7 +246,6 @@ export default function BarraLateral({ imputados, onSubSelected, archivosDisposi
           </Collapse>
         </List>
       </Collapse>
-
       {/* Segunda Carpeta: Información Recibida */}
       <ListItemButton onClick={handleClick2}>
         <ListItemIcon sx={{ color: 'white' }}>
@@ -268,10 +263,12 @@ export default function BarraLateral({ imputados, onSubSelected, archivosDisposi
       <Collapse in={open2} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
           {imputados.map((imputado, index) => {
-            // Filtrar archivos relacionados con el imputado actual
             const archivosRelacionados = archivosImputados.filter(
               (archivo) => archivo.imputado === imputado.id
             );
+            const tiposDeArchivos = [
+              ...new Set(archivosRelacionados.map((archivo) => archivo.tipo)),
+            ];
 
             return (
               <React.Fragment key={imputado.id}>
@@ -305,26 +302,61 @@ export default function BarraLateral({ imputados, onSubSelected, archivosDisposi
                     <ExpandMore sx={{ color: 'white' }} />
                   )}
                 </ListItemButton>
-
                 <Collapse in={openImputados[index]} timeout="auto" unmountOnExit>
                   <List component="div" disablePadding>
-                    {archivosRelacionados.map((archivo) => (
-                      <Link to={archivo.archivo} target='__blank'>
-                        <ListItemButton sx={{ pl: 8 }} key={archivo.id}>
-                          <ListItemIcon sx={{ color: 'white' }}>
-                            <PictureAsPdfIcon />
-                          </ListItemIcon>
-                          <ListItemText
-                            primary={
-                              <Typography variant="caption">
-                                {archivo.nombre}.pdf
-                              </Typography>
-                            }
-                            sx={{ color: 'white' }}
-                          />
-                        </ListItemButton>
-                      </Link>
-                    ))}
+                    {tiposDeArchivos.map((tipo) => {
+                      const archivosPorTipo = archivosRelacionados.filter(
+                        (archivo) => archivo.tipo === tipo
+                      );
+                      return (
+                        <React.Fragment key={`${imputado.id}-${tipo}`}>
+                          <ListItemButton
+                            sx={{
+                              pl: 6,
+                              bgcolor:
+                                selectedSub === tipo ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
+                            }}
+                            onClick={() => {
+                              setSelectedSub(tipo);
+                              onSubSelected(tipo);
+                            }}
+                          >
+                            <ListItemIcon sx={{ color: 'white' }}>
+                              <FolderIcon />
+                            </ListItemIcon>
+                            <ListItemText
+                              primary={
+                                <Typography variant="caption">
+                                  {tipo}
+                                </Typography>
+                              }
+                              sx={{ color: 'white' }}
+                            />
+                          </ListItemButton>
+                          <Collapse in={selectedSub === tipo} timeout="auto" unmountOnExit>
+                            <List component="div" disablePadding>
+                              {archivosPorTipo.map((archivo) => (
+                                <Link to={archivo.archivo} target="__blank" key={archivo.id}>
+                                  <ListItemButton sx={{ pl: 8 }}>
+                                    <ListItemIcon sx={{ color: 'white' }}>
+                                      <PictureAsPdfIcon />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                      primary={
+                                        <Typography variant="caption">
+                                          {archivo.nombre}.pdf
+                                        </Typography>
+                                      }
+                                      sx={{ color: 'white' }}
+                                    />
+                                  </ListItemButton>
+                                </Link>
+                              ))}
+                            </List>
+                          </Collapse>
+                        </React.Fragment>
+                      );
+                    })}
                   </List>
                 </Collapse>
               </React.Fragment>
@@ -332,7 +364,6 @@ export default function BarraLateral({ imputados, onSubSelected, archivosDisposi
           })}
         </List>
       </Collapse>
-
     </List>
   );
 }

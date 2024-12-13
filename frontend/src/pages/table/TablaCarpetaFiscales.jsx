@@ -42,17 +42,18 @@ function TablaCarpetaFiscales({ search, carpetas, deleteCarpeta }) {
     );
   });
 
-  // Función para obtener estilos basados en el estado
   const getEstadoStyles = (estado) => {
     switch (estado) {
-      case "Investigación":
-        return { backgroundColor: "secundary", color: "white" };
+      case "Preliminar":
+        return { backgroundColor: "green", color: "white" };
+      case "Preparatoria":
+        return { backgroundColor: "gray", color: "white" };
+      case "Con requerimiento":
+        return { backgroundColor: "primary", color: "white" };
       case "Archivado":
         return { backgroundColor: "red", color: "white" };
-      case "Finalizado":
-        return { backgroundColor: "green", color: "white" };
       default:
-        return { backgroundColor: "gray", color: "white" }; // Estilo predeterminado
+        return { backgroundColor: "gray", color: "white" }; 
     }
   };
 
@@ -82,15 +83,13 @@ function TablaCarpetaFiscales({ search, carpetas, deleteCarpeta }) {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => (
                 <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
-                  {/* Número de Carpeta */}
                   <TableCell align="center">{row.numero_carpeta}</TableCell>
 
-                  {/* Fecha */}
                   <TableCell align="center">
                     {row.fecha ? row.fecha : "N/A"}
                   </TableCell>
 
-                  {/* Estado */}
+
                   <TableCell align="center">
                     <Button
                       variant="contained"
@@ -105,7 +104,6 @@ function TablaCarpetaFiscales({ search, carpetas, deleteCarpeta }) {
                     </Button>
                   </TableCell>
 
-                  {/* Acciones */}
                   <TableCell align="center">
                     <Link
                       to={`/carpeta/${row.id}`}
