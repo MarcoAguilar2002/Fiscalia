@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
+import { Box, TextField, MenuItem } from "@mui/material";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
@@ -21,9 +22,22 @@ const columns = [
   { id: "acciones", label: "Acciones", minWidth: 100, align: "center" },
 ];
 
+const estadosDisponibles = [
+  { value: "", label: "Todos" },
+  { value: "Preliminar", label: "Preliminar" },
+  { value: "Preparatoria", label: "Preparatoria" },
+  { value: "Con requerimiento", label: "Con requerimiento" },
+  { value: "Archivado", label: "Archivado" },
+];
+
 function TablaCarpetaFiscales({ search, carpetas, deleteCarpeta }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  // Estados para el filtrado por fechas y estado
+  const [fechaInicio, setFechaInicio] = useState("");
+  const [fechaFin, setFechaFin] = useState("");
+  const [filtroEstado, setFiltroEstado] = useState("");
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -35,12 +49,32 @@ function TablaCarpetaFiscales({ search, carpetas, deleteCarpeta }) {
   };
 
   // Filtrar las filas en base al término de búsqueda
-  const filteredData = carpetas.filter((row) => {
+  let filteredData = carpetas.filter((row) => {
     return (
-      row.numero_carpeta.toLowerCase().includes(search.toLowerCase()) ||
-      (row.estado && row.estado.toLowerCase().includes(search.toLowerCase()))
+      row.numero_carpeta.toLowerCase().includes(search.toLowerCase()) 
     );
   });
+
+  // Filtrar por estado
+  if (filtroEstado) {
+    filteredData = filteredData.filter(
+      (row) => row.estado && row.estado === filtroEstado
+    );
+  }
+
+  // Filtrar por fechas (asumiendo formato YYYY-MM-DD en row.fecha)
+  if (fechaInicio) {
+    filteredData = filteredData.filter((row) => row.fecha && row.fecha >= fechaInicio);
+  }
+  if (fechaFin) {
+    filteredData = filteredData.filter((row) => row.fecha && row.fecha <= fechaFin);
+  }
+
+  const limpiarFiltros = () => {
+    setFechaInicio("");
+    setFechaFin("");
+    setFiltroEstado("");
+  };
 
   const getEstadoStyles = (estado) => {
     switch (estado) {
@@ -49,16 +83,53 @@ function TablaCarpetaFiscales({ search, carpetas, deleteCarpeta }) {
       case "Preparatoria":
         return { backgroundColor: "gray", color: "white" };
       case "Con requerimiento":
-        return { backgroundColor: "primary", color: "white" };
+        return { backgroundColor: "blue", color: "white" };
       case "Archivado":
         return { backgroundColor: "red", color: "white" };
       default:
-        return { backgroundColor: "gray", color: "white" }; 
+        return { backgroundColor: "gray", color: "white" };
     }
   };
 
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
+      {/* Controles de filtrado */}
+      <Box display="flex" gap={2} padding={2} flexWrap="wrap" alignItems="center">
+        <TextField
+          label="Fecha Inicio"
+          type="date"
+          InputLabelProps={{ shrink: true }}
+          value={fechaInicio}
+          onChange={(e) => setFechaInicio(e.target.value)}
+          size="small"
+        />
+        <TextField
+          label="Fecha Fin"
+          type="date"
+          InputLabelProps={{ shrink: true }}
+          value={fechaFin}
+          onChange={(e) => setFechaFin(e.target.value)}
+          size="small"
+        />
+        <TextField
+          select
+          label="Estado"
+          value={filtroEstado}
+          onChange={(e) => setFiltroEstado(e.target.value)}
+          size="small"
+          style={{ minWidth: 170 }}
+        >
+          {estadosDisponibles.map((estado) => (
+            <MenuItem key={estado.value} value={estado.value}>
+              {estado.label}
+            </MenuItem>
+          ))}
+        </TextField>
+        <Button variant="outlined" onClick={limpiarFiltros}>
+          Limpiar
+        </Button>
+      </Box>
+
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
@@ -84,12 +155,9 @@ function TablaCarpetaFiscales({ search, carpetas, deleteCarpeta }) {
               .map((row) => (
                 <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                   <TableCell align="center">{row.numero_carpeta}</TableCell>
-
                   <TableCell align="center">
                     {row.fecha ? row.fecha : "N/A"}
                   </TableCell>
-
-
                   <TableCell align="center">
                     <Button
                       variant="contained"
@@ -103,7 +171,6 @@ function TablaCarpetaFiscales({ search, carpetas, deleteCarpeta }) {
                       {row.estado ? row.estado : "N/A"}
                     </Button>
                   </TableCell>
-
                   <TableCell align="center">
                     <Link
                       to={`/carpeta/${row.id}`}
@@ -118,7 +185,7 @@ function TablaCarpetaFiscales({ search, carpetas, deleteCarpeta }) {
                       to={`/carpeta/editar/${row.id}`}
                       style={{ textDecoration: "none" }}
                     >
-                      <IconButton color="secundary" size="small">
+                      <IconButton color="gray" size="small">
                         <EditIcon />
                       </IconButton>
                     </Link>

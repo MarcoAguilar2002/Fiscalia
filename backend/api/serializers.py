@@ -42,6 +42,7 @@ class CarpetaFiscalSerializer(serializers.ModelSerializer):
 
 # Serializer para el modelo ArchivoDisposicion
 class ArchivoDisposicionSerializer(serializers.ModelSerializer):
+    subido_user_username = serializers.CharField(source="subido_user.username", read_only=True)  # Acceso directo al username
     class Meta:
         model = ArchivoDisposicion
         fields = [
@@ -52,11 +53,14 @@ class ArchivoDisposicionSerializer(serializers.ModelSerializer):
             'archivo',
             'carpeta_fiscal',
             'subido_user',
+            'subido_user_username'
         ]
         extra_kwargs = {
             "subido_user": {"read_only": True}, 
             "carpeta_fiscal" : {"read_only": True}, 
         }
+    
+    
 
 class ImputadoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -77,6 +81,7 @@ class ImputadoSerializer(serializers.ModelSerializer):
 
 
 class ArchivoInvestigadoSerializer(serializers.ModelSerializer):
+    subido_user_username = serializers.CharField(source="subido_user.username", read_only=True)
     class Meta:
         model = ArchivoInvestigado
         fields = [
@@ -87,6 +92,7 @@ class ArchivoInvestigadoSerializer(serializers.ModelSerializer):
             'imputado',
             'tipo',
             'subido_user',
+            'subido_user_username'
         ]
         extra_kwargs = {
             "imputado" : {"read_only": True}, 

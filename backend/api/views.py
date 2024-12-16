@@ -83,7 +83,6 @@ class ArchivosImputadosRetrieveDestroy(generics.RetrieveUpdateDestroyAPIView):
 
     
 
-
 class ArchivosDisposicionesListCreateView(generics.ListCreateAPIView):
     serializer_class = ArchivoDisposicionSerializer
     permission_classes = [IsAuthenticated]
@@ -101,3 +100,30 @@ class ArchivosDisposicionesListCreateView(generics.ListCreateAPIView):
             subido_user=self.request.user,
             carpeta_fiscal=carpeta
         )
+
+class ArchivosDisposicionVerEditarYEliminar(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = ArchivoDisposicionSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = ArchivoDisposicion.objects.all()
+
+    def partial_update(self, request, *args, **kwargs):
+        archivo = self.get_object()  # Obtiene la instancia actual del modelo
+        data = request.data
+
+        # Actualizar campos específicos desde los datos del request
+        archivo.nombre = data.get('nombre', archivo.nombre)
+        archivo.tipo = data.get('tipo', archivo.tipo)
+        archivo.fecha = data.get('fecha', archivo.fecha)
+
+        # Manejar archivo: si se proporciona uno nuevo, actualízalo
+        if 'archivo' in request.FILES:
+            archivo.archivo = request.FILES['archivo']
+            archivo.subido_user = request.user  # Actualiza el usuario solo si hay nuevo archivo
+
+        # Guardar los cambios en la base de datos
+        archivo.save()
+
+        # Serializar la instancia actualizada para devolverla al cliente
+        serializer = self.get_serializer(archivo)
+        return super().update(request, *args, **kwargs)
+

@@ -9,5 +9,9 @@ urlpatterns = [
     path("carpeta/<int:pk>/", views.VerCarpetaView.as_view(), name="ver-Carpeta"),
     path("carpeta/<int:pk>/imputados/", views.ImputadosListCreateView.as_view(), name="imputados-list-create"),
     path("imputado/<int:imputado>/archivos/",views.ArchivosImputadosListCreateView.as_view(),name="archivos-imputados-list-create"),
+    path('archivos-imputados/<int:pk>/',views.ArchivosImputadosRetrieveDestroy.as_view(),name= "Archivos-Imputados-Detail"),
     path('carpeta/<int:pk>/archivos-disposiciones/', views.ArchivosDisposicionesListCreateView.as_view(), name='archivos-disposiciones'),
+    path('archivos-disposiciones/<int:pk>/', views.ArchivosDisposicionVerEditarYEliminar.as_view(), name="Detail-archivos-disposiciones"),
+
+
 ]

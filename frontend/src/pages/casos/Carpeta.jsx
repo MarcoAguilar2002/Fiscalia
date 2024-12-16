@@ -65,7 +65,7 @@ function Carpeta() {
             type="text"
             value={search}
             onChange={handleSearchChange}
-            placeholder="Buscar por número de carpeta o estado"
+            placeholder="Buscar por número de carpeta "
             style={{
               padding: '10px',
               fontSize: '14px',

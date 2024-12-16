@@ -26,6 +26,8 @@ export default function BarraLateral({ imputados, onSubSelected, archivosDisposi
     imputados.map(() => false) // Estado para controlar el colapso de cada subcarpeta de imputado
   );
 
+  const [openTipos, setOpenTipos] = React.useState({});
+
   const archivosFiltradosDisposiciones = archivosDisposiciones.filter((archivo) => archivo.tipo === 'Disposiciones');
   const archivosFiltradosRequerimientos = archivosDisposiciones.filter((archivo) => archivo.tipo === 'Requerimientos');
   const archivosFiltradosProvidencia = archivosDisposiciones.filter((archivo) => archivo.tipo === 'Providencia');
@@ -61,6 +63,16 @@ export default function BarraLateral({ imputados, onSubSelected, archivosDisposi
     newOpenStates[index] = !newOpenStates[index];
     setOpenImputados(newOpenStates);
     setSelectedSub(imputado.nombres + ' ' + imputado.apellidos); // Marca como seleccionada la subcarpeta
+  };
+
+  const toggleTipoCollapse = (imputadoId, tipo) => {
+    setOpenTipos((prev) => ({
+      ...prev,
+      [imputadoId]: {
+        ...prev[imputadoId],
+        [tipo]: !prev[imputadoId]?.[tipo]
+      }
+    }));
   };
 
   return (
@@ -308,21 +320,21 @@ export default function BarraLateral({ imputados, onSubSelected, archivosDisposi
                       const archivosPorTipo = archivosRelacionados.filter(
                         (archivo) => archivo.tipo === tipo
                       );
+                      const isTipoOpen = openTipos[imputado.id]?.[tipo] || false;
                       return (
                         <React.Fragment key={`${imputado.id}-${tipo}`}>
                           <ListItemButton
                             sx={{
                               pl: 6,
                               bgcolor:
-                                selectedSub === tipo ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
+                              isTipoOpen ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
                             }}
                             onClick={() => {
-                              setSelectedSub(tipo);
-                              onSubSelected(tipo);
+                              toggleTipoCollapse(imputado.id, tipo);
                             }}
                           >
                             <ListItemIcon sx={{ color: 'white' }}>
-                              <FolderIcon />
+                            {isTipoOpen ? <FolderOpenIcon /> : <FolderIcon />}
                             </ListItemIcon>
                             <ListItemText
                               primary={
@@ -332,8 +344,13 @@ export default function BarraLateral({ imputados, onSubSelected, archivosDisposi
                               }
                               sx={{ color: 'white' }}
                             />
+                             {isTipoOpen ? (
+                              <ExpandLess sx={{ color: 'white' }} />
+                            ) : (
+                              <ExpandMore sx={{ color: 'white' }} />
+                            )}
                           </ListItemButton>
-                          <Collapse in={selectedSub === tipo} timeout="auto" unmountOnExit>
+                          <Collapse in={isTipoOpen} timeout="auto" unmountOnExit>
                             <List component="div" disablePadding>
                               {archivosPorTipo.map((archivo) => (
                                 <Link to={archivo.archivo} target="__blank" key={archivo.id}>

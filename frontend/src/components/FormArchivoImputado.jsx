@@ -186,6 +186,7 @@ function FormArchivoImputado({ open, handleClose, handleSubmit, imputadoId, impu
             type="file"
             hidden
             onChange={handleFileUpload}
+            accept="application/pdf" 
           />
         </Button>
         {errors.archivo && (
